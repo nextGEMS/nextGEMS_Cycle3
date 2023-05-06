@@ -1,0 +1,45 @@
+# Available variables per resolution:
+# - 1_degree_monthly: ocv, t20d, ocu, sst, ci, zos, tav300, sav300, mld, sithick
+# - 025_degree_monthly: swvl1, 2t, ocv, so, t20d, ocu, sst, ttr, tsr, ci, zos, tav300, sav300, mld, sithick
+
+plugins:
+  source:
+  - module: intake_xarray
+sources:
+  025_degree_monthly:
+    args:
+      urlpath:
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/swvl1.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/2t.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/ocv.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/so.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/t20d.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/ocu.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/sst.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/ttr.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/tsr.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/ci.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/zos.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/tav300.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/sav300.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/mld.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/moda/sithick.nc
+    driver: netcdf
+    metadata:
+      resolution: 025_degree_monthly
+  1_degree_monthly:
+    args:
+      urlpath:
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/ocv.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/t20d.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/ocu.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/sst.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/ci.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/zos.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/tav300.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/sav300.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/mld.nc
+      - /scratch/a/a270046/cycle3/extracted/tco2559-ng5/sithick.nc
+    driver: netcdf
+    metadata:
+      resolution: 1_degree_monthly

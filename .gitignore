@@ -1,0 +1,33 @@
+# General Python project files to ignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter Notebook files to ignore
+.ipynb_checkpoints/
+*.ipynb_metadata
+jupyter_notebook_config.py
+
+# Virtual environment files to ignore
+venv/
+*.venv
+env/
+ENV/
+
+# IDE settings files to ignore
+.vscode/
+.idea/
+
+# Log files to ignore
+*.log
+
+# Temporary files to ignore
+*.tmp
+*.swp
+*.swo
+

@@ -59,7 +59,8 @@ chunks = {
 def extract_source(file_name):
     for source, variables in variable_sources.items():
         for variable in variables:
-            if file_name.startswith(variable):
+            # this is very FESOM specific
+            if file_name.split(".")[0] == variable:
                 return source
     return None
 
@@ -84,7 +85,7 @@ def create_intake_catalog():
     # base_dir = "Cycle3_"
     catalog_entries = {}
 
-    for year in range(2020, 2023):
+    for year in range(2020, 2022):
         for month in range(1, 13):
             directory = f"{base_dir}{month:02d}{year}"
             if os.path.exists(directory):
@@ -122,5 +123,5 @@ def create_intake_catalog():
 catalog = create_intake_catalog()
 
 # Example usage
-ds = catalog["2d_elements_monthly"].to_dask()
-print(ds)
+# ds = catalog["2d_elements_monthly"].to_dask()
+# print(ds)

@@ -1,0 +1,44 @@
+plugins:
+  source:
+  - module: intake_xarray
+sources:
+  3d_vertices_nz1_daily:
+    driver: zarr
+    args:
+      consolidated: True
+      urlpath: 
+      - /work/bm1344/AWI/Cycle3/test/temp_2020.zarr
+      - /work/bm1344/AWI/Cycle3/test/temp_2021.zarr
+      - /work/bm1344/AWI/Cycle3/test/salt_2020.zarr
+      - /work/bm1344/AWI/Cycle3/test/salt_2021.zarr
+  3d_vertices_nz1_monthly:
+    driver: netcdf
+    args:      
+      chunks:
+        nod2: -1
+        time: 1
+        nz1: -1
+      urlpath: 
+      - /work/bm1344/AWI/Cycle3/test/monthly_means/salt/salt_2020.nc
+      - /work/bm1344/AWI/Cycle3/test/monthly_means/salt/salt_2021.nc
+      - /work/bm1344/AWI/Cycle3/test/monthly_means/temp/temp_2020.nc
+      - /work/bm1344/AWI/Cycle3/test/monthly_means/temp/temp_2021.nc
+  # 3d_elements_nz1-upper_3hourly:
+  #   args:
+  #     chunks:
+  #       elem: -1
+  #       nz1_upper: -1
+  #       time: 1
+  #     urlpath:
+  #     - /work/bm1235/a270046/cycle3/tco2559l137/hzfy/hres/intel.levante.openmpi/lvt.intel.sp/Cycle3_012020/v_upper.fesom.2020.nc
+  #   driver: netcdf
+  #   metadata:
+  #     source: 3d_elements_nz1-upper_3hourly
+  elem_grid:
+    args:
+      urlpath: /work/bm1235/a270046/meshes/NG5_griddes_elems_IFS.nc
+    driver: netcdf
+  node_grid:
+    args:
+      urlpath: /work/bm1235/a270046/meshes/NG5_griddes_nodes_IFS.nc
+    driver: netcdf

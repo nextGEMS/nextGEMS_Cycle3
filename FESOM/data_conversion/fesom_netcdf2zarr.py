@@ -41,3 +41,5 @@ if __name__ == "__main__":
 
     toconvert = toconvert.chunk(chunk_dims)
     toconvert.to_dataset().to_zarr(args.output, encoding={args.variable: {"compressor": compressor}})
+    client.close()
+    

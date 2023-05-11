@@ -12,6 +12,7 @@ build/
 .ipynb_checkpoints/
 *.ipynb_metadata
 jupyter_notebook_config.py
+dask-worker-space/
 
 # Virtual environment files to ignore
 venv/

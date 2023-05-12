@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    cat = intake.open_catalog("../../catalog.yaml")
+    cat = intake.open_catalog("https://nextgems.github.io/catalog/catalog.yaml")
     run = cat.FESOM['tco2559-ng5-cycle3'][args.run].to_dask()
 
     dask.config.set({'temporary_directory': args.workers})

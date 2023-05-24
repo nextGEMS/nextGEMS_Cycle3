@@ -1,4 +1,3 @@
-# the catalog is now at: https://nextgems.github.io/catalog/catalog.yaml
+# the catalog is now at: https://data.nextgems-h2020.eu/catalog.yaml
 # you can open it with:
-# cat = intake.open_catalog("https://nextgems.github.io/catalog/catalog.yaml")
-#
+# cat = intake.open_catalog("https://data.nextgems-h2020.eu/catalog.yaml")

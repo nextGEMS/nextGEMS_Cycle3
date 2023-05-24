@@ -38,6 +38,8 @@ if __name__ == "__main__":
     for var_name, da in data.data_vars.items():
         opath = os.path.join(args.output_folder, "FESOM", args.experiment, args.resolution, args.what_interpolate, var_name)
         ensure_directory_exists(opath)
+        if var_name in ['tx_sur', 'ty_sur']:
+            regridder = rg.Regridder(weights=f"/work/ab0995/a270088/NextGems/Cycle3/weights/weights_FESOM_tco2559-ng5_original_2d_ycon_ecmwf_{args.resolution}_l2d_elements.nc")
         for year in range(args.start_year, args.end_year+1):
             for mon in range(1, 13):
                 print(f"{var_name}, {year}, {mon}")

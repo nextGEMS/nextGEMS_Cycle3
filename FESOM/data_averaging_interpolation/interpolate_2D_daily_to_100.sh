@@ -15,7 +15,7 @@ source /sw/etc/profile.levante
 python interpolate_2d.py --experiment IFS_4.4-FESOM_5-cycle3 \
                          --what_interpolate 2D_daily_native \
                          --output_folder /work/bm1344/AWI/Cycle3/ \
-                         --start_year 2020 \
-                         --end_year 2023 \
+                         --start_year 2024 \
+                         --end_year 2024 \
                          --resolution "100" 
 

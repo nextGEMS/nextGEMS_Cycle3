@@ -1,7 +1,7 @@
 Interpolation and averaging scripts for FESOM
 ---------------------------------------------
 
-- `interpolate_2d.py` - interpolates 2D FESOM data to 1/4 degree (`025`) or 1 degree (`100`) resolutions with [smmregrid](https://github.com/jhardenberg/smmregrid/tree/main) packege. It uses sparce matrix mutliplication method with weights precomputed by `cdo`. Curerntly for FESOM NG5 mesh (used in `IFS_4.4-FESOM_5-cycle3` experiment) we have weight for conservative remapping on 1/4 and 1 degree grids:
+- `interpolate_2d.py` - interpolates 2D FESOM data to 1/4 degree (`025`) or 1 degree (`100`) resolutions with [smmregrid](https://github.com/jhardenberg/smmregrid/tree/main) package. It uses sparce matrix mutliplication method with weights precomputed by `cdo`. Curerntly for FESOM NG5 mesh (used in `IFS_4.4-FESOM_5-cycle3` experiment) we have weight for conservative remapping on 1/4 and 1 degree grids:
 
 ```
 /work/ab0995/a270088/NextGems/Cycle3/weights/weights_FESOM_tco2559-ng5_original_2d_ycon_ecmwf_025_l2d.nc

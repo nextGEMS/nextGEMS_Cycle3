@@ -10,9 +10,143 @@ from scipy.interpolate import (
     NearestNDInterpolator,
 )
 import pyproj
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from cartopy.util import add_cyclic_point
+from scipy.spatial import cKDTree
+import numpy as np
+from pyproj import CRS, Transformer
 
 g = pyproj.Geod(ellps="WGS84")
 
+def lon_lat_to_cartesian(lon, lat, R=6371000):
+    """
+    calculates lon, lat coordinates of a point on a sphere with
+    radius R. Taken from http://earthpy.org/interpolation_between_grids_with_ckdtree.html
+    """
+    lon_r = np.radians(lon)
+    lat_r = np.radians(lat)
+
+    x = R * np.cos(lat_r) * np.cos(lon_r)
+    y = R * np.cos(lat_r) * np.sin(lon_r)
+    z = R * np.sin(lat_r)
+    return x, y, z
+
+def create_indexes_and_distances(model_lon, model_lat, lons, lats, k=1, workers=2):
+    """
+    Creates KDTree object and query it for indexes of points in FESOM mesh that are close to the
+    points of the target grid. Also return distances of the original points to target points.
+    Parameters
+    ----------
+    mesh : fesom_mesh object
+        pyfesom mesh representation
+    lons/lats : array
+        2d arrays with target grid values.
+    k : int
+        k-th nearest neighbors to return.
+    n_jobs : int, optional
+        Number of jobs to schedule for parallel processing. If -1 is given
+        all processors are used. Default: 1.
+    Returns
+    -------
+    distances : array of floats
+        The distances to the nearest neighbors.
+    inds : ndarray of ints
+        The locations of the neighbors in data.
+    """
+    xs, ys, zs = lon_lat_to_cartesian(model_lon, model_lat)
+    xt, yt, zt = lon_lat_to_cartesian(lons.flatten(), lats.flatten())
+
+    tree = cKDTree(list(zip(xs, ys, zs)))
+    distances, inds = tree.query(list(zip(xt, yt, zt)), k=k, workers=workers)
+
+    return distances, inds
+
+def projected_grid_to_platecarree_pyproj(box, res, projection="World_Mercator", n_points=100):
+    """
+    Generate a grid of points in the desired projection and then convert the grid points back to 
+    PlateCarree (longitude and latitude) space.
+
+    This function creates additional points along the edges of the bounding box specified by the user.
+    It then transforms those edge points to the projected coordinate space and calculates the bounding box in
+    the projected coordinate space based on the transformed edge points. Finally, it creates a grid in the
+    projected coordinate space using the calculated bounding box and converts the grid points back to the
+    PlateCarree space.
+
+    Parameters
+    ----------
+    box : list
+        A list representing the bounding box in PlateCarree space, in the format [left,right,down,up].
+    res : tuple or None
+        A tuple (lonNumber, latNumber) representing the desired grid resolution in the projected
+        coordinate space. If None, the default resolution (500, 500) is used.
+    projection : str, optional
+        The desired projection for the grid, specified as a string with the projection name or the EPSG code. 
+        Default is 'World_Mercator'.
+    n_points : int, optional
+        The number of points to generate along each edge of the bounding box for approximating
+        the corners of the projected image. Default is 100.
+
+    Returns
+    -------
+    x : numpy.ndarray
+        A 1D array of x coordinates in the projected coordinate space.
+    y : numpy.ndarray
+        A 1D array of y coordinates in the projected coordinate space.
+    lon : numpy.ndarray
+        A 2D array of longitude values in PlateCarree space corresponding to the generated grid points.
+    lat : numpy.ndarray
+        A 2D array of latitude values in PlateCarree space corresponding to the generated grid points.
+
+    Notes
+    -----
+    The edge points are created by generating evenly spaced longitude and latitude values within the
+    bounding box specified by the user. Four sets of points are created: the top edge, the bottom edge,
+    the left edge, and the right edge of the bounding box. These points are then stacked together into a
+    single array. Transforming these edge points to the target projection's coordinate space provides an 
+    approximation of the edges of the projected image, which can be used to calculate a bounding box in 
+    the projected coordinate space.
+    """
+    if isinstance(projection, str):
+        projection_crs = CRS.from_string(projection)
+    else:
+        projection_crs = CRS.from_epsg(projection)
+
+    # Define CRS for PlateCarree
+    platecarree_crs = CRS.from_epsg(4326)
+
+    # Create Transformer objects
+    to_projection = Transformer.from_crs(platecarree_crs, projection_crs, always_xy=True)
+    to_platecarree = Transformer.from_crs(projection_crs, platecarree_crs, always_xy=True)
+
+    # Parse the bounding box and grid resolution
+    left, right, down, up = box
+    lonNumber, latNumber = res if res is not None else (500, 500)
+
+    # Generate edge points in PlateCarree space
+    lons = np.linspace(left, right, n_points)
+    lats = np.linspace(down, up, n_points)
+    edge_points_lon, edge_points_lat = np.meshgrid(
+        np.hstack((lons, lons, np.repeat(left, n_points), np.repeat(right, n_points))),
+        np.hstack((np.repeat(down, n_points), np.repeat(up, n_points), lats, lats)),
+    )
+
+    # Transform edge points to the target projection's coordinate space
+    edge_points_x, edge_points_y = to_projection.transform(edge_points_lon, edge_points_lat)
+
+    # Calculate the bounding box in the target projection's coordinate space
+    xmin, xmax = np.min(edge_points_x), np.max(edge_points_x)
+    ymin, ymax = np.min(edge_points_y), np.max(edge_points_y)
+
+    # Create a grid in the target projection's coordinate space
+    x = np.linspace(xmin, xmax, lonNumber)
+    y = np.linspace(ymin, ymax, latNumber)
+    x2d, y2d = np.meshgrid(x, y)
+
+    # Convert the grid points back to PlateCarree space
+    lon, lat = to_platecarree.transform(x2d, y2d)
+
+    return x, y, lon, lat
 
 def tunnel_fast1d(latvar, lonvar, lonlat):
     """
